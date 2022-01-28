@@ -1,9 +1,9 @@
-#!/usr/local/bin/python3.9
+#!/opt/homebrew/bin/python3.9
 '''
     Date:   10/30/2021
     Author: Martin E. Liza
     File:   runSimulation.py
-    Def:
+    Def:    ./runSimulation --SU2 inviscid -n 2 -mach 0.5 -AoA 6
 
     Author		    Date		Revision
     ----------------------------------------------------
@@ -16,38 +16,50 @@ import os
 import re 
 import IPython 
 
-#number_of_cases = 5 
+# Output Folder 
 cases_out = 'new_cases'
 
 # Parser Options, Cart3D, LEMAS, etc 
 def arg_flags():
     parser = argparse.ArgumentParser() 
     parser.add_argument('--SU2', type=str.lower, required=True,
-                        help='Create SU2 simulations, inviscid or turbulent')
+                        help='Creates and runs SU2 simulations for 
+                              inviscid or rans')
 
-    parser.add_argument('-n', type=int, required=True)
+    # Optional arguments 
+    parser.add_argument('-n', nargs='?', type=int, required=False, 
+                        help='Number of cases to be created')
+    parser.add_argument('-mach', nargs='?', type=float, required=False)
+    parser.add_argument('-AoA', nargs='?', type=float, required=False)
+    args = parser.parse_args()  
 
-    #parser.add_argument('options', nargs='*')
+    # If optional arguments are empty modified them to defaults 
+    if args.n is None: 
+        setattr(args, 'n', 1)
+    if args.mach is None: 
+        setattr(args, 'mach', 0.8)
+    if args.AoA is None: 
+        setattr(args, 'AoA', 0.0)
 
-    return parser.parse_args() 
+    return args 
 
 # Create folders with each case 
 def create_cases(args): 
     destination_path = os.path.join(os.getcwd(), f'{cases_out}') 
     source_path      = os.getcwd()
     switch = { 0: 'inviscid',
-               1: 'turbulent' }
+               1: 'rans' }
     # Inviscid Case 
     if (args.SU2 == switch[0]):
-        dir_in  = 'SU2_Inviscid' 
+        dir_in  = os.path.join('SU2', 'inviscid') 
         source  = os.path.join(source_path, dir_in)
         for i in range(1, args.n + 1):
             dir_out = os.path.join(destination_path, f'case_{i}')
             shutil.copytree(source, dir_out)
 
-    # Turbulent Case 
+    # Rans Case 
     if (args.SU2 == switch[1]):
-        dir_in = 'SU2_Turbulent' 
+        dir_in  = os.path.join('SU2', 'rans') 
         source  = os.path.join(source_path, dir_in)
         for i in range(1, args.n + 1):
             dir_out = os.path.join(destination_path, f'case_{i}')
