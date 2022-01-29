@@ -1,6 +1,6 @@
 #!/opt/homebrew/bin/python3.9
 '''
-    Date:   01/28/2022
+    Date:   01/29/2022
     Author: Martin E. Liza
     File:   runSimulation.py
     Def:    Create and runs SU2 cases (inviscid and rans), at the moment 
@@ -10,10 +10,12 @@
             1) SU2 exports should be in the ~/.bashrc. 
 
     Ex. ./runSimulation --SU2 inviscid -n 2 -mach 0.5 0.6 -AoA 6 20 
+                        -pressure 10134.0 24521.0 -temperature 280 300
+                        -absOutPath 
 
     Author		    Date		Revision
-    ------------------------------------------------
-    Martin E. Liza	10/30/2021	Initial version.
+    ----------------------------------------------
+    Martin E. Liza	01/29/2021	Initial version.
 '''
 import argparse 
 import subprocess 
@@ -21,9 +23,6 @@ import shutil
 import os 
 import re 
 import IPython 
-
-# Output Folder absolute path 
-cases_out = 'new_cases'
 
 # Parser Options, Cart3D, LEMAS, etc 
 def arg_flags():
@@ -37,6 +36,7 @@ def arg_flags():
     parser.add_argument('-AoA', nargs='*', type=float, required=False)
     parser.add_argument('-pressure', nargs='*', type=float, required=False)
     parser.add_argument('-temperature', nargs='*', type=float, required=False)
+    parser.add_argument('-absOutPath', nargs='*', type=str, required=False)
     args = parser.parse_args()  
     # If optional arguments are empty modified them to defaults 
     if args.n is None: 
@@ -49,11 +49,13 @@ def arg_flags():
         setattr(args, 'pressure', [101325.0] )
     if args.temperature is None: 
         setattr(args, 'temperature', [273.0])
-    return args 
+    if args.absOutPath is None:
+        setattr(args, 'absOutPath', [os.getcwd()])
+    return args
 
 # Create folders with each case 
 def create_cases(args): 
-    destination_path = os.path.join(os.getcwd(), f'{cases_out}') 
+    destination_path = f'{args.absOutPath[0]}' 
     source_path      = os.getcwd()
     switch = { 0: 'inviscid',
                1: 'rans' }
@@ -74,9 +76,11 @@ def create_cases(args):
 
 def mod_input(args):
     # Creates a direct path to each case 
-    cases_list = sorted(os.listdir(cases_out)) 
+    cases_out   = f'{args.absOutPath[0]}'
+    list_filter = [x for x in os.listdir(cases_out) if x.startswith('case')]
+    cases_list  = sorted(list_filter)
     for i, val in enumerate(cases_list): 
-        cases_path = os.path.join(os.getcwd(), cases_out, val)
+        cases_path = os.path.join(cases_out, val)
     # Strings to replace  
         mach_str        = 'MACH_NUMBER= \d*[.,]?\d*'     
         aoa_str         = 'AOA= \d*[.,]?\d*'
@@ -103,9 +107,11 @@ def mod_input(args):
 # Modify slurm files 
 def mod_slurm(args):
     # Creates a direct path to each case 
-    cases_list = sorted(os.listdir(cases_out)) 
-    for i in cases_list:  
-        cases_path = os.path.join(os.getcwd(), cases_out, i)
+    cases_out   = f'{args.absOutPath[0]}'
+    list_filter = [x for x in os.listdir(cases_out) if x.startswith('case')]
+    cases_list  = sorted(list_filter)
+    for i, val in enumerate(cases_list):  
+        cases_path = os.path.join(cases_out, val)
     # Searching strings and replacing strings 
         job_name_str     = '\#SBATCH --job-name=.*?\n' 
         job_name_replace = f'#SBATCH --job-name={i}\n'
@@ -121,8 +127,10 @@ def mod_slurm(args):
 #  Run Cases 
 def run_cases(args):
     # Set up for bash call 
-    cases        = sorted(os.listdir(cases_out)) 
-    for i, val in enumerate(cases):
+    cases_out   = f'{args.absOutPath[0]}'
+    list_filter = [x for x in os.listdir(cases_out) if x.startswith('case')]
+    cases_list  = sorted(list_filter)
+    for i, val in enumerate(cases_list):
         running_case = os.path.join(f'{cases_out}', val) 
         output_file  = 'output_print.txt'
         cwd          = os.getcwd() 
