@@ -20,6 +20,7 @@ import subprocess
 import shutil 
 import os 
 import re 
+import IPython 
 
 # Output Folder absolute path 
 cases_out = 'new_cases'
@@ -41,13 +42,13 @@ def arg_flags():
     if args.n is None: 
         setattr(args, 'n', 1)
     if args.mach is None: 
-        setattr(args, 'mach', 0.8)
+        setattr(args, 'mach', [0.8])
     if args.AoA is None: 
-        setattr(args, 'AoA', 0.0)
+        setattr(args, 'AoA', [0.0])
     if args.pressure is None: 
-        setattr(args, 'pressure', 101325.0 )
+        setattr(args, 'pressure', [101325.0] )
     if args.temperature is None: 
-        setattr(args, 'temperature', 273.0)
+        setattr(args, 'temperature', [273.0])
     return args 
 
 # Create folders with each case 
@@ -85,8 +86,8 @@ def mod_input(args):
         ## FIX ME: temperature and pressure are constant ##  
         mach_replace        = f'MACH_NUMBER= {args.mach[i]}'
         aoa_replace         = f'AOA= {args.AoA[i]}'
-        pressure_replace    = f'FREESTREAM_PRESSURE= {args.pressure}'
-        temperature_replace = f'FREESTREAM_TEMPERATURE= {args.temperature}'
+        pressure_replace    = f'FREESTREAM_PRESSURE= {args.pressure[0]}'
+        temperature_replace = f'FREESTREAM_TEMPERATURE= {args.temperature[0]}'
         file_to_read = f'{args.SU2}.cfg'
     # Loading input file in memory  
         reading_file = open(os.path.join(cases_path, file_to_read), 'r+') 
