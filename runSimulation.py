@@ -83,11 +83,10 @@ def mod_input(args):
         pressure_str    = 'FREESTREAM_PRESSURE= \d*[.,]?\d*'
         temperature_str = 'FREESTREAM_TEMPERATURE= \d*[.,]?\d*'
     # New variables  
-        ## FIX ME: temperature and pressure are constant ##  
         mach_replace        = f'MACH_NUMBER= {args.mach[i]}'
         aoa_replace         = f'AOA= {args.AoA[i]}'
-        pressure_replace    = f'FREESTREAM_PRESSURE= {args.pressure[0]}'
-        temperature_replace = f'FREESTREAM_TEMPERATURE= {args.temperature[0]}'
+        pressure_replace    = f'FREESTREAM_PRESSURE= {args.pressure[i]}'
+        temperature_replace = f'FREESTREAM_TEMPERATURE= {args.temperature[i]}'
         file_to_read = f'{args.SU2}.cfg'
     # Loading input file in memory  
         reading_file = open(os.path.join(cases_path, file_to_read), 'r+') 
