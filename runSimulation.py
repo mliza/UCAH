@@ -11,7 +11,7 @@
 
     Ex. ./runSimulation --SU2 inviscid -n 2 -mach 0.5 0.6 -AoA 6 20 
                         -pressure 10134.0 24521.0 -temperature 280 300
-                        -absOutPath 
+                        -absOutPath ~/Desktop 
 
     Author		    Date		Revision
     ----------------------------------------------

@@ -11,13 +11,13 @@
 %}
 
 % User inputs 
-SU2_simulation  = 'inviscid'; % inviscid or rans  
-number_of_cases = '1';        % number of cases the user is creating, n=1 is the default
-mach_number     = '0.8';      % [ ], 0.8 is the default mach 
-angle_of_attack = '0.0';      % [deg], 0.0 is the default angle
-pressure        = '101325.0'; % [Pa], 101325.0 is the default pressure 
-temperature     = '273';      % [K], 273 is the default temperature 
-absPath         = 'newCases'; % default is same as where the runsSimulation.py 
+SU2_simulation  = 'rans'; % inviscid or rans  
+number_of_cases = '2';        % number of cases the user is creating, n=1 is the default
+mach_number     = '0.8 0.9';      % [ ], 0.8 is the default mach 
+angle_of_attack = '0.0 0.5';      % [deg], 0.0 is the default angle
+pressure        = '101325.0 10000'; % [Pa], 101325.0 is the default pressure 
+temperature     = '273 275';      % [K], 273 is the default temperature 
+absPath         = 'newCases'; % No default, needs to be specified  
 
 % Creates string with python inputs to be run  
 su2_str   = sprintf('--SU2 %s', SU2_simulation);
@@ -33,3 +33,44 @@ run_str   = sprintf('python3.9 runSimulation.py %s', flags_str')
         
 % Calls Python 
 system(run_str);
+
+% Parsing output data 
+cases_in      = dir(sprintf('%s', absPath));
+cases_in(1:2) = [ ]; % Delete hidden files 
+cell_cases_in = struct2cell(cases_in); 
+
+% Empty arrays  
+c_D   = [ ]; 
+c_L   = [ ];
+c_Eff = [ ];
+c_Mx  = [ ];
+c_My  = [ ];
+c_Mz  = [ ];
+c_Fx  = [ ];
+c_Fy  = [ ];
+c_Fz  = [ ];
+
+
+for i = 1:length(cases_in) 
+    flag_in   = sprintf('%s/%s/output_print.txt', absPath, cell_cases_in{1,i});
+    hist_in   = sprintf('%s/%s/history.csv', absPath, cell_cases_in{1,i});
+    flag_read = fileread(flag_in); 
+    flag      = regexp(flag_read, 'All convergence criteria satisfied');
+    if isempty(flag)
+        sprintf('%s did not converge properly!', cell_cases_in{1,i}) 
+    else 
+        history_read = readtable(hist_in, 'PreserveVariableNames', true); 
+        c_D(i)   = history_read.CD(end);  
+        c_L(i)   = history_read.CL(end);
+        c_Eff(i) = history_read.CEff(end);
+        c_Mx(i)  = history_read.CMx(end); 
+        c_My(i)  = history_read.CMy(end); 
+        c_Mz(i)  = history_read.CMz(end); 
+        c_Fx(i)  = history_read.CFx(end); 
+        c_Fy(i)  = history_read.CFy(end); 
+        c_Fz(i)  = history_read.CFz(end); 
+
+    end 
+
+end 
+
