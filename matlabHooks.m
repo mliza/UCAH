@@ -11,13 +11,13 @@
 %}
 
 % User inputs 
-SU2_simulation  = 'rans'; % inviscid or rans  
-number_of_cases = '2';        % number of cases the user is creating, n=1 is the default
-mach_number     = '0.8 0.9';      % [ ], 0.8 is the default mach 
-angle_of_attack = '0.0 0.5';      % [deg], 0.0 is the default angle
-pressure        = '101325.0 10000'; % [Pa], 101325.0 is the default pressure 
-temperature     = '273 275';      % [K], 273 is the default temperature 
-absPath         = 'newCases'; % No default, needs to be specified  
+SU2_simulation  = 'inviscid'; % inviscid or rans  
+number_of_cases = '5';            % number of cases the user is creating, n=1 is the default
+mach_number     = '0.1 0.3 0.5 0.7 0.9';      % [ ], 0.8 is the default mach 
+angle_of_attack = '16 16 16 16 16 16';      % [deg], 0.0 is the default angle
+pressure        = '101325 101325 101325 101325 101325'; % [Pa], 101325.0 is the default pressure 
+temperature     = '288.2 288.2 288.2 288.2 288.2';      % [K], 273 is the default temperature 
+absPath         = 'angle_16'; % No default, needs to be specified  
 
 % Creates string with python inputs to be run  
 su2_str   = sprintf('--SU2 %s', SU2_simulation);
@@ -38,8 +38,7 @@ system(run_str);
 cases_in      = dir(sprintf('%s', absPath));
 cases_in(1:2) = [ ]; % Delete hidden files 
 cell_cases_in = struct2cell(cases_in); 
-
-% Empty arrays  
+% Empty arrays to be populated  
 c_D   = [ ]; 
 c_L   = [ ];
 c_Eff = [ ];
@@ -51,6 +50,7 @@ c_Fy  = [ ];
 c_Fz  = [ ];
 
 
+% Reads and populates data from SU2 history file
 for i = 1:length(cases_in) 
     flag_in   = sprintf('%s/%s/output_print.txt', absPath, cell_cases_in{1,i});
     hist_in   = sprintf('%s/%s/history.csv', absPath, cell_cases_in{1,i});
@@ -73,4 +73,5 @@ for i = 1:length(cases_in)
     end 
 
 end 
+
 
