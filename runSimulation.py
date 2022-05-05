@@ -11,11 +11,12 @@
 
     Ex. ./runSimulation --SU2 inviscid -n 2 -mach 0.5 0.6 -AoA 6 20 
                         -pressure 10134.0 24521.0 -temperature 280 300
-                        -absOutPath ~/Desktop 
+                        -absOutPath ~/Desktop -outName fileNameOut 
 
     Author		    Date		Revision
     ----------------------------------------------
-    Martin E. Liza	01/29/2021	Initial version.
+    Martin E. Liza	01/29/2022	Initial version.
+    Martin E. Liza  05/05/2022  Added the outName flag 
 '''
 import argparse 
 import subprocess 
@@ -28,7 +29,7 @@ import IPython
 def arg_flags():
     parser = argparse.ArgumentParser() 
     parser.add_argument('--SU2', type=str.lower, required=True,
-            help='Creates and runs SU2 simulations. Options are inviscid or rans.') 
+     help='Creates and runs SU2 simulations. Options are inviscid or rans.') 
     # Optional arguments 
     parser.add_argument('-n', nargs='?', type=int, required=False, 
                         help='Number of cases to be created. Default is 1')
@@ -42,8 +43,10 @@ def arg_flags():
                         help='Temperature per case. Default is 288.2[K]')
     parser.add_argument('-absOutPath', nargs='*', type=str, required=False,
                         help='Absolute output path') 
+    parser.add_argument('-outName', nargs='*', type=str, required=False,
+                        help='Optional output folder name') 
     parser.add_argument('-model', nargs='*', type=str, required=False,
-                        help='Model options for rans only (SA, SA_NEG and SST). Default is SA.') 
+     help='Model options for rans only (SA, SA_NEG and SST). Default is SA.') 
     args = parser.parse_args()  
     # If optional arguments are empty modified them to defaults 
     if args.n is None: 
@@ -58,6 +61,8 @@ def arg_flags():
         setattr(args, 'temperature', [288.2])
     if args.absOutPath is None:
         setattr(args, 'absOutPath', [os.getcwd()])
+    if args.outName is None:
+        setattr(args, 'outName', ['case'])
     if args.model is None:
         setattr(args, 'model', ['SA'])
     return args
@@ -65,6 +70,7 @@ def arg_flags():
 # Create folders with each case 
 def create_cases(args): 
     destination_path = f'{args.absOutPath[0]}' 
+    case_name        = f'{args.outName[0]}'
     source_path      = os.getcwd()
     switch = { 0: 'inviscid',
                1: 'rans' }
@@ -73,14 +79,14 @@ def create_cases(args):
         dir_in  = os.path.join('SU2', 'inviscid') 
         source  = os.path.join(source_path, dir_in)
         for i in range(1, args.n + 1):
-            dir_out = os.path.join(destination_path, f'case_{i}')
+            dir_out = os.path.join(destination_path, f'{case_name}_{i}')
             shutil.copytree(source, dir_out)
     # Rans Case 
     if (args.SU2 == switch[1]):
         dir_in  = os.path.join('SU2', 'rans') 
         source  = os.path.join(source_path, dir_in)
         for i in range(1, args.n + 1):
-            dir_out = os.path.join(destination_path, f'case_{i}')
+            dir_out = os.path.join(destination_path, f'{case_name}_{i}')
             shutil.copytree(source, dir_out)
 
 def mod_input(args):
