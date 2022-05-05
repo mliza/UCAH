@@ -43,7 +43,7 @@ def arg_flags():
     parser.add_argument('-absOutPath', nargs='*', type=str, required=False,
                         help='Absolute output path') 
     parser.add_argument('-model', nargs='*', type=str, required=False,
-                        help='RANS model. Options are SA, SA_NEG and SST. Default is SA.') 
+                        help='Model options for rans only (SA, SA_NEG and SST). Default is SA.') 
     args = parser.parse_args()  
     # If optional arguments are empty modified them to defaults 
     if args.n is None: 
@@ -101,19 +101,21 @@ def mod_input(args):
         aoa_replace         = f'AOA= {args.AoA[i]}'
         pressure_replace    = f'FREESTREAM_PRESSURE= {args.pressure[i]}'
         temperature_replace = f'FREESTREAM_TEMPERATURE= {args.temperature[i]}'
-        rans_model_replace  = f'KIND_TURB_MODEL= {args.model[i]}'
+        if args.SU2 == 'rans':
+            rans_model_replace  = f'KIND_TURB_MODEL= {args.model[0]}'
         file_to_read        = f'{args.SU2}.cfg'
     # Loading input file in memory  
         reading_file = open(os.path.join(cases_path, file_to_read), 'r+') 
         file_open    = reading_file.read() 
         reading_file.close() 
     # Searching and writing new file 
-        if args.SU2 == 'rans':
-            new_file     = re.sub(rans_model_str, rans_model_replace, file_open) 
-        new_file     = re.sub(mach_str, mach_replace, new_file) 
+        new_file     = re.sub(mach_str, mach_replace, file_open) 
         new_file     = re.sub(aoa_str, aoa_replace, new_file) 
         new_file     = re.sub(pressure_str, pressure_replace, new_file) 
         new_file     = re.sub(temperature_str, temperature_replace, new_file) 
+    # RANS Model's flag 
+        if args.SU2 == 'rans':
+            new_file     = re.sub(rans_model_str, rans_model_replace, new_file) 
         writing_file = open(os.path.join(cases_path, file_to_read), 'r+') 
         writing_file.write(new_file) 
 

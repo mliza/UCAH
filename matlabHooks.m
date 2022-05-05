@@ -11,13 +11,13 @@
 %}
 
 % User inputs 
-SU2_simulation  = 'inviscid'; % inviscid or rans  
-number_of_cases = '5';            % number of cases the user is creating, n=1 is the default
-mach_number     = '0.1 0.3 0.5 0.7 0.9';      % [ ], 0.8 is the default mach 
-angle_of_attack = '16 16 16 16 16 16';      % [deg], 0.0 is the default angle
-pressure        = '101325 101325 101325 101325 101325'; % [Pa], 101325.0 is the default pressure 
-temperature     = '288.2 288.2 288.2 288.2 288.2';      % [K], 273 is the default temperature 
-absPath         = 'angle_16'; % No default, needs to be specified  
+SU2_simulation  = 'inviscid';     % inviscid or rans  
+number_of_cases = '2';            % number of cases the user is creating, n=1 is the default
+mach_number     = '0.1 0.3';      % [ ], 0.8 is the default mach 
+angle_of_attack = '10 2';         % [deg], 0.0 is the default angle
+pressure        = '101352 10132'; % [Pa], 101325.0 is the default pressure 
+temperature     = '288 289.4';    % [K], 273 is the default temperature 
+absPath         = 'test';         % No default, needs to be specified  
 
 % Creates string with python inputs to be run  
 su2_str   = sprintf('--SU2 %s', SU2_simulation);
