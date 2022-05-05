@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/python3.9
+#!/usr/bin/python3
 '''
     Date:   01/29/2022
     Author: Martin E. Liza
@@ -150,12 +150,11 @@ def run_cases(args):
         output_file  = 'output_print.txt'
         cwd          = os.getcwd() 
         change_dir   = os.chdir(running_case) 
-        subprocess.call(f'SU2_CFD *.cfg >> {output_file}', shell=True)
+        subprocess.call(f'SU2_CFD *.cfg >> {output_file} &', shell=True)
         original_dir = os.chdir(cwd) 
 
 if __name__=='__main__': 
     args = arg_flags() 
     create_cases(args) 
     mod_input(args) 
-    mod_slurm(args)
     run_cases(args) 
