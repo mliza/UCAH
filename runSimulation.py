@@ -92,7 +92,9 @@ def create_cases(args):
 def mod_input(args):
     # Creates a direct path to each case 
     cases_out   = f'{args.absOutPath[0]}'
-    list_filter = [x for x in os.listdir(cases_out) if x.startswith('case')]
+    case_name   = f'{args.outName[0]}'
+    list_filter = [x for x in os.listdir(cases_out) if x.startswith(
+                  f'{case_name}')]
     cases_list  = sorted(list_filter)
     for i, val in enumerate(cases_list): 
         cases_path = os.path.join(cases_out, val)
@@ -129,7 +131,9 @@ def mod_input(args):
 def mod_slurm(args):
     # Creates a direct path to each case 
     cases_out   = f'{args.absOutPath[0]}'
-    list_filter = [x for x in os.listdir(cases_out) if x.startswith('case')]
+    case_name   = f'{args.outName[0]}'
+    list_filter = [x for x in os.listdir(cases_out) if x.startswith(
+                  f'{case_name}')]
     cases_list  = sorted(list_filter)
     for i, val in enumerate(cases_list):  
         cases_path = os.path.join(cases_out, val)
@@ -149,7 +153,9 @@ def mod_slurm(args):
 def run_cases(args):
     # Set up for bash call 
     cases_out   = f'{args.absOutPath[0]}'
-    list_filter = [x for x in os.listdir(cases_out) if x.startswith('case')]
+    case_name   = f'{args.outName[0]}'
+    list_filter = [x for x in os.listdir(cases_out) if x.startswith(
+                  f'{case_name}')]
     cases_list  = sorted(list_filter)
     for i, val in enumerate(cases_list):
         running_case = os.path.join(f'{cases_out}', val) 

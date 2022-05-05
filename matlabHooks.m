@@ -17,7 +17,8 @@ mach_number     = '0.1 0.3';      % [ ], 0.8 is the default mach
 angle_of_attack = '10 2';         % [deg], 0.0 is the default angle
 pressure        = '101352 10132'; % [Pa], 101325.0 is the default pressure 
 temperature     = '288 289.4';    % [K], 273 is the default temperature 
-absPath         = 'test';         % No default, needs to be specified  
+absPath         = '/home/mliza/scripts/cases';         % Default (if left empty) is current directory  
+outName         = 'test';     % Default (if left empty) is case
 
 % Creates string with python inputs to be run  
 su2_str   = sprintf('--SU2 %s', SU2_simulation);
@@ -27,9 +28,13 @@ aoa_str   = sprintf('-AoA %s', angle_of_attack);
 pres_str  = sprintf('-pressure %s', pressure); 
 temp_str  = sprintf('-temperature %s', temperature);
 path_str  = sprintf('-absOutPath %s', absPath);
-flags_str = sprintf('%s %s %s %s %s %s %s', ...
-            su2_str, n_str, mach_str, aoa_str, pres_str, temp_str, path_str);
-run_str   = sprintf('python3.9 runSimulation.py %s', flags_str')
+name_str  = sprintf('-outName %s', outName);
+
+
+flags_str = sprintf('%s %s %s %s %s %s %s %s %s', ...
+            su2_str, n_str, mach_str, aoa_str, pres_str, ... 
+            temp_str, path_str, name_str);
+run_str   = sprintf('python3 runSimulation.py %s', flags_str')
         
 % Calls Python 
 system(run_str);
