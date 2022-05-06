@@ -3,7 +3,7 @@
     Author: Martin E. Liza
     File:   caller.m
     Def:    Example on how to run parserCaller
-    Req:    1) python3.9 and all packages listed in the runSimulation.py
+    Req:    1) python3 and all packages listed in the runSimulation.py
 
     Author		    Date		Revision
     ----------------------------------------------------
