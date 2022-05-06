@@ -6,8 +6,9 @@
     Def:    Create and runs SU2 cases (inviscid and rans), at the moment 
             the pressure and temperature are kept constant at STD conditions. 
             Only the mach number and angle of attack are able to be modified.
-   Req:     1) SU2 folder with inviscid and rans cases. 
-            2) SU2 exports should be in the ~/.bashrc. 
+   Req:     1) SU2 software.  
+            2) SU2 folder with inviscid and rans cases. 
+            3) SU2 exports should be in the ~/.bashrc. 
 
     Ex. ./runSimulation --SU2 inviscid -n 2 -mach 0.5 0.6 -AoA 6 20 
                         -pressure 10134.0 24521.0 -temperature 280 300
@@ -16,14 +17,13 @@
     Author		    Date		Revision
     ----------------------------------------------
     Martin E. Liza	01/29/2022	Initial version.
-    Martin E. Liza  05/05/2022  Added the outName flag 
+    Martin E. Liza  05/05/2022  Added the outName flag. 
 '''
 import argparse 
 import subprocess 
 import shutil 
 import os 
 import re 
-import IPython 
 
 # Parser Options, Cart3D, LEMAS, etc 
 def arg_flags():
@@ -162,7 +162,7 @@ def run_cases(args):
         output_file  = 'output_print.txt'
         cwd          = os.getcwd() 
         change_dir   = os.chdir(running_case) 
-        subprocess.call(f'SU2_CFD *.cfg >> {output_file} &', shell=True)
+        subprocess.call(f'SU2_CFD *.cfg >> {output_file}', shell=True)
         original_dir = os.chdir(cwd) 
 
 if __name__=='__main__': 
