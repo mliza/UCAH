@@ -1,5 +1,5 @@
 %{
-    Date:   05/05/2022
+    Date:   06/14/2022
     Author: Martin E. Liza
     File:   parserCaller.m
     Def:    Calls the python wrapper and process the coefficients, returns 
@@ -9,9 +9,10 @@
     Author		    Date		Revision
     ----------------------------------------------------
     Martin E. Liza	05/05/2022	Initial version.
+    Martin E. Liza	06/14/2022	Added convergence flag.
 %}
 function struct_out = parserCaller(SU2_simulation, model_name, ...  
-                            mach_number, angle_of_attack, abs_path, out_name)
+                mach_number, angle_of_attack, convergence, abs_path, out_name)
     % Creates string with python inputs to be run  
     su2_str    = sprintf('--SU2 %s', SU2_simulation);
     mach_str   = sprintf('-mach %s', mach_number); 
@@ -19,20 +20,21 @@ function struct_out = parserCaller(SU2_simulation, model_name, ...
     path_str   = sprintf('-absOutPath %s', abs_path);
     name_str   = sprintf('-outName %s', out_name);
     rans_str   = sprintf('-model %s', model_name);
+    conv_str   = sprintf('-convergence %s', convergence);
 
     % If rans model 
     if strcmp(SU2_simulation, 'rans')
         if rans_str ~= false 
-            su2_str = sprintf('%s %s', su2_str, rans_str); 
+            su2_str = sprintf('%s %s %s', su2_str, rans_str, conv_str); 
         end 
     end 
 
     if abs_path == false
-        flags_str = sprintf('%s %s %s %s', ...
-                su2_str, mach_str, aoa_str, name_str);
-    else 
         flags_str = sprintf('%s %s %s %s %s', ...
-                su2_str, mach_str, aoa_str, name_str, path_str);
+                su2_str, mach_str, aoa_str, name_str, conv_str);
+    else 
+        flags_str = sprintf('%s %s %s %s %s %s', ...
+                su2_str, mach_str, aoa_str, name_str, conv_str, path_str);
     end 
 
     % Create running string, (can be suppress, add semicolon   

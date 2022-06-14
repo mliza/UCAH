@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''
-    Date:   01/29/2022
+    Date:   06/14/2022
     Author: Martin E. Liza
     File:   runSimulation.py
     Def:    Create and runs SU2 cases (inviscid and rans), at the moment 
@@ -18,6 +18,8 @@
     ----------------------------------------------
     Martin E. Liza	01/29/2022	Initial version.
     Martin E. Liza  05/05/2022  Added the outName flag. 
+    Martin E. Liza  06/14/2022  Added the convergence flag. 
+
 '''
 import argparse 
 import subprocess 
@@ -41,6 +43,8 @@ def arg_flags():
                         help='Pressure per case. Default is 101325 [Pa]')
     parser.add_argument('-temperature', nargs='*', type=float, required=False,
                         help='Temperature per case. Default is 288.2[K]')
+    parser.add_argument('-convergence', nargs='*', type=float, required=False, 
+                        help='Convergence criteria, default is -13')
     parser.add_argument('-absOutPath', nargs='*', type=str, required=False,
                         help='Absolute output path') 
     parser.add_argument('-outName', nargs='*', type=str, required=False,
@@ -59,6 +63,8 @@ def arg_flags():
         setattr(args, 'pressure', [101325.0] )
     if args.temperature is None: 
         setattr(args, 'temperature', [288.2])
+    if args.convergence is None: 
+        setattr(args, 'convergence', [13])
     if args.absOutPath is None:
         setattr(args, 'absOutPath', [os.getcwd()])
     if args.outName is None:
@@ -103,12 +109,14 @@ def mod_input(args):
         aoa_str         = 'AOA= \d*[.,]?\d*'
         pressure_str    = 'FREESTREAM_PRESSURE= \d*[.,]?\d*'
         temperature_str = 'FREESTREAM_TEMPERATURE= \d*[.,]?\d*'
+        convergence_str = 'CONV_RESIDUAL_MINVAL= -\d*[.,]?\d*'
         rans_model_str  = 'KIND_TURB_MODEL= SA'
     # New variables  
         mach_replace        = f'MACH_NUMBER= {args.mach[i]}'
         aoa_replace         = f'AOA= {args.AoA[i]}'
         pressure_replace    = f'FREESTREAM_PRESSURE= {args.pressure[i]}'
         temperature_replace = f'FREESTREAM_TEMPERATURE= {args.temperature[i]}'
+        convergence_replace = f'CONV_RESIDUAL_MINVAL= -{args.convergence[i]}'
         if args.SU2 == 'rans':
             rans_model_replace  = f'KIND_TURB_MODEL= {args.model[0]}'
         file_to_read        = f'{args.SU2}.cfg'
@@ -121,6 +129,7 @@ def mod_input(args):
         new_file     = re.sub(aoa_str, aoa_replace, new_file) 
         new_file     = re.sub(pressure_str, pressure_replace, new_file) 
         new_file     = re.sub(temperature_str, temperature_replace, new_file) 
+        new_file     = re.sub(convergence_str, convergence_replace, new_file) 
     # RANS Model's flag 
         if args.SU2 == 'rans':
             new_file     = re.sub(rans_model_str, rans_model_replace, new_file) 
