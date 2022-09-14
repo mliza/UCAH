@@ -18,16 +18,16 @@ import numpy as np
 # User inputs 
 n_cases         = 2
 mach_in         = [1.8, 1.2]     
-AoA             = [5, 17]  #[Degs] 
-pressure_in     = 101325 * np.ones(n_cases)#[Pa]
-temperature_in  = 279 * np.ones(n_cases) #[K]
+AoA             = [5, 17]                       #[Degs] 
+pressure_in     = 101325 * np.ones(n_cases)     #[Pa]
+temperature_in  = 279 * np.ones(n_cases)        #[K]
 abs_path        = '/Users/martin/Desktop'
 case_name       = 'test'
 model           = 'SA_NEG'
 SU2             = 'rans'
 convergence     = 13
 
-# Set attributes 
+# Set attributes and run Simulations  
 for i in range(n_cases): 
     parser = argparse.ArgumentParser() 
     args   = parser.parse_args() 
