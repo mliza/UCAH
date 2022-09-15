@@ -15,7 +15,6 @@ import subprocess
 import shutil 
 import os 
 import re 
-import IPython 
 
 # Parser Options, Cart3D, LEMAS, etc 
 def arg_flags():
