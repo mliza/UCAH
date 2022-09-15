@@ -43,7 +43,7 @@ for i in range(n_cases):
     run_simulations.create_case(args, cfd_simulation='SU2', mesh_name='naca0012.su2')
     run_simulations.mod_slurm(case_abs_path=os.path.join(abs_path, f'{case_name}_{i}'),  
                               job_name=f'{case_name}{i}')
-    run_simulations.run_CFD(args, cfd_simulation='SU2', local_flag=True, hpc_flag=False)
+    run_simulations.run_CFD(args, cfd_simulation='SU2', local_flag=False, hpc_flag=True)
 
 
 
