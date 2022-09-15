@@ -8,6 +8,7 @@
     Author		    Date		Revision
     ----------------------------------------------------
     Martin E. Liza	09/07/2022	Initial version.
+    Martin E. Liza  09/15/2022  Added a pbs option. 
 '''
 import argparse 
 import subprocess 
@@ -123,12 +124,22 @@ def mod_SU2(args, case_to_modify, mesh_abs_path):
     writing_file.write(new_file) 
 
 # Modify slurm files
-def mod_slurm(case_abs_path, job_name):
-    slurm_file   = os.path.join(case_abs_path, 'run.slurm') 
+def mod_run_HPC(args, hpc_flag='slurm'):
+    case_abs_path = os.path.join(args.absOutPath[0], args.outName[0])
+    # PBS flag 
+    if hpc_flag == 'pbs':
+        hpc_file     = os.path.join(case_abs_path, 'run.pbs') 
+        case_str     = '#PBS -N .*'
+        case_replace = f'#PBS -N {job_name}'
 
-    case_str     = '#SBATCH --job-name=.*'
-    case_replace = f'#SBATCH --job-name={job_name}'
-    open_file    = open(slurm_file, 'r+')
+    # SLURM flag 
+    if hpc_flag == 'slurm':
+        hpc_file     = os.path.join(case_abs_path, 'run.slurm') 
+        case_str     = '#SBATCH --job-name=.*'
+        case_replace = f'#SBATCH --job-name={job_name}'
+
+    # Modify file 
+    open_file    = open(hpc_file, 'r+')
     read_file    = open_file.read()
     open_file.close() 
     # Searching and writing strings 
@@ -137,13 +148,18 @@ def mod_slurm(case_abs_path, job_name):
     writing_file.write(new_file) 
 
 # Run Simulations  
-def run_CFD(args, cfd_simulation, local_flag=False, hpc_flag=False):
+def run_CFD(args, cfd_simulation, local_flag=False, hpc_flag=False): 
     case_abs_path = os.path.join(args.absOutPath[0], args.outName[0])
     # HPC flag 
     if hpc_flag:
         pwd_cwd = os.getcwd() 
         os.chdir(case_abs_path)
-        subprocess.call('sbatch run.slurm', shell=True)
+        # run slurm 
+        if hpc_flag == 'slurm':
+            subprocess.call('sbatch run.slurm', shell=True)
+        # run pbs 
+        if hpc_flag == 'pbs':
+            subprocess.call('qsub run.pbs', shell=True)
         os.chdir(pwd_cwd)
     # Local Flag 
     if local_flag:
@@ -157,6 +173,5 @@ def run_CFD(args, cfd_simulation, local_flag=False, hpc_flag=False):
 if __name__=='__main__': 
     args = arg_flags() 
     create_case(args, cfd_simulation='SU2', mesh_name='naca0012.su2') 
-    mod_slurm('case', 'case_1') 
+    mod_run_HPC(args, hpc_flag='slurm') 
     run_CFD(args, cfd_simulation='SU2', local_flag=True, hpc_flag=False)
-

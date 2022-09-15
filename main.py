@@ -5,9 +5,10 @@
     File:   main.py
     Def:
 
-    Author		Date		Revision
+    Author		    Date		Revision
     ----------------------------------------------------
     Martin E. Liza	09/13/2022	Initial version.
+
 '''
 import run_simulations 
 import IPython 
@@ -16,37 +17,33 @@ import os
 import numpy as np 
 
 # User inputs 
-n_cases         = 2
-mach_in         = [1.8, 1.2]     
-AoA             = [5, 17]                       #[Degs] 
-pressure_in     = 101325 * np.ones(n_cases)     #[Pa]
-temperature_in  = 279 * np.ones(n_cases)        #[K]
+mach_in         = range(0, 9)               #[ ] 
+AoA             = range(0, 25, 5)           #[Degs] 
+pressure_in     = 101325                    #[Pa]
+temperature_in  = 288.2                     #[K]
 abs_path        = '/Users/martin/Desktop'
-case_name       = 'test'
 model           = 'SA_NEG'
 SU2             = 'rans'
 convergence     = 13
 
 # Set attributes and run Simulations  
-for i in range(n_cases): 
-    parser = argparse.ArgumentParser() 
-    args   = parser.parse_args() 
-    setattr(args, 'mach', [mach_in[i]])  
-    setattr(args, 'AoA', [AoA[i]])  
-    setattr(args, 'pressure', [pressure_in[i]])  
-    setattr(args, 'temperature', [temperature_in[i]])  
-    setattr(args, 'outName', [f'{case_name}_{i}']) 
-    setattr(args, 'model', [model]) 
-    setattr(args, 'SU2', SU2) 
-    setattr(args, 'absOutPath', [abs_path]) 
-    setattr(args, 'convergence', [convergence])
-    run_simulations.create_case(args, cfd_simulation='SU2', mesh_name='naca0012.su2')
-    run_simulations.mod_slurm(case_abs_path=os.path.join(abs_path, f'{case_name}_{i}'),  
-                              job_name=f'{case_name}{i}')
-    run_simulations.run_CFD(args, cfd_simulation='SU2', local_flag=False, hpc_flag=True)
-
-
-
-
-
-
+for i in mach_in: 
+    for j in AoA:
+        parser = argparse.ArgumentParser() 
+        args   = parser.parse_args() 
+        setattr(args, 'mach', [mach_in[i]])  
+        setattr(args, 'AoA', [AoA[j]])  
+        setattr(args, 'pressure', [pressure_in])  
+        setattr(args, 'temperature', [temperature_in])  
+        setattr(args, 'outName', [f'M{i}_AoA{j}']) 
+        setattr(args, 'model', [model]) 
+        setattr(args, 'SU2', SU2) 
+        setattr(args, 'absOutPath', [abs_path]) 
+        setattr(args, 'convergence', [convergence])
+        run_simulations.create_case(args, cfd_simulation='SU2',
+                                    mesh_name='naca0012.su2', 
+                                    run_flag='pbs')
+        run_simulations.mod_run_HPC(args, hpc_flag='pbs')
+        run_simulations.run_CFD(args, cfd_simulation='SU2', 
+                                local_flag=False, 
+                                hpc_flag='pbs') 
