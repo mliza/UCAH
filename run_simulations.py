@@ -123,13 +123,16 @@ def mod_SU2(args, case_to_modify, mesh_abs_path):
     writing_file.write(new_file) 
 
 # Modify slurm files
-def mod_run_HPC(args, hpc_flag='slurm'):
+def mod_run_HPC(args, hpc_flag='slurm', abs_path=None):
     case_abs_path = os.path.join(args.absOutPath[0], args.outName[0])
     job_name      = args.outName[0] 
     # PBS flag 
     if hpc_flag == 'pbs':
         hpc_file     = os.path.join(case_abs_path, 'run.pbs') 
         case_str     = '#PBS -N .*'
+        path_str     = f'cd {abs_path}'
+        path_str     = 'cd .*' 
+        path_replace = f'cd {abs_path}/{job_name}' 
         case_replace = f'#PBS -N {job_name}'
 
     # SLURM flag 
@@ -144,6 +147,7 @@ def mod_run_HPC(args, hpc_flag='slurm'):
     open_file.close() 
     # Searching and writing strings 
     new_file      = re.sub(case_str, case_replace, read_file)
+    new_file      = re.sub(path_str, path_replace, new_file)
     writing_file  = open(hpc_file, 'r+')
     writing_file.write(new_file) 
 
