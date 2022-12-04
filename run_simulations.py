@@ -131,13 +131,14 @@ def mod_run_HPC(args, hpc_flag='slurm', abs_path=None):
         hpc_file     = os.path.join(case_abs_path, 'run.pbs') 
         case_str     = '#PBS -N .*'
         path_str     = f'cd {abs_path}'
-        path_str     = 'cd .*' 
         path_replace = f'cd {abs_path}/{job_name}' 
         case_replace = f'#PBS -N {job_name}'
 
     # SLURM flag 
     if hpc_flag == 'slurm':
         hpc_file     = os.path.join(case_abs_path, 'run.slurm') 
+        path_str     = f'cd {abs_path}'
+        path_replace = f'cd {abs_path}/{job_name}' 
         case_str     = '#SBATCH --job-name=.*'
         case_replace = f'#SBATCH --job-name={job_name}'
 

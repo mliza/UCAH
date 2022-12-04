@@ -13,7 +13,7 @@
 
 ##  Runs SU2  ##
 module load openmpi3 
-/home/u22/mliza/srcCode/SU2/install/usr/local/bin/SU2_CFD *.cfg 
+SU2_CFD *.cfg 
 
 ## Runs Lemans ##
 #mpiexec $HOME/srcCode/lemans-mopar/build/bin/lemans_mopar  
