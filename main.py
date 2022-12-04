@@ -17,18 +17,18 @@ import os
 # User inputs 
 mach_in         = [1.1, 2, 3, 4, 5, 6, 7, 8, 9]          #[ ] 
 AoA             = [0, 5, 10, 15, 18, 20, 22, 25]       #[Degs] 
-mach_in         = [1.1]
-AoA             = [0] 
 pressure_in     = 5530.0                 #[Pa]
 temperature_in  = 217                    #[K]
 abs_path        = '/p/work1/mliza/angle_22'
 abs_path        = '/p/work1/mliza/angle_45'
-mesh_name       = 'naca0012.su2'
-mesh_name       = 'pw_mesh2.su2'
+abs_path        = '/p/work1/mliza/laminar_0'
 mesh_name       = 'pw_mesh2_22p5.su2'
 mesh_name       = 'pw_mesh2_45.su2'
-model           = 'SA'
+mesh_name       = 'pw_mesh2.su2'
+model           = 'SA_NEG'
+model           = 'NAVIER_STOKES'
 SU2             = 'rans'
+SU2             = 'laminar'
 convergence     = 8.5
 
 # Set attributes and run Simulations  

@@ -20,7 +20,7 @@ import re
 def arg_flags():
     parser = argparse.ArgumentParser() 
     parser.add_argument('--SU2', type=str.lower, required=True,
-     help='Creates and runs SU2 simulations. Options are inviscid or rans.') 
+     help='Creates and runs SU2 simulations. Options are laminar or rans.') 
     # Optional arguments 
     parser.add_argument('-mach', nargs='*', type=float, required=False,
                         help='Mach number per case. Default is 0.8')
@@ -68,9 +68,9 @@ def create_case(args, cfd_simulation, mesh_name):
 
     # If the flag is for SU2 
     if cfd_simulation == 'SU2':
-        switch = {0 : 'inviscid',
+        switch = {0 : 'laminar',
                   1 : 'rans'}
-        # Copy inviscid folder 
+        # Copy laminar folder 
         if args.SU2 == switch[0]:
             src_path = os.path.join(cwd_path, cfd_path, f'{switch[0]}')
             dir_out  = os.path.join(destination_path, f'{case_name}')
