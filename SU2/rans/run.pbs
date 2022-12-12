@@ -1,0 +1,25 @@
+## Required PBS Directives --------------------------------------
+#PBS -A ODEFN49052FME
+#PBS -q debug 
+#PBS -l select=1:ncpus=48:mpiprocs=48
+#PBS -l place=pack:shared
+#PBS -l walltime=1:00:00
+#
+## Optional PBS Directives --------------------------------------
+#PBS -N M3_A15_v1
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -V
+###PBS -l ccm=1
+#PBS -m bea
+## ccm=1 option for Cluster Compatibility Mode, including using
+## executables compiled with Dynamic Shared Libraries
+#
+## Execution Block ----------------------------------------------
+# Environment Setup
+# cd to your personal directory in the scratch file system
+cd ${PBS_O_WORKDIR}
+#
+# Launching -----------------------------------------------------
+# copy executable from $HOME and submit it
+mpirun -n 48 SU2_CFD *.cfg |& tee printout.out
