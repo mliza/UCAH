@@ -3,16 +3,17 @@
     Date:   09/26/2022
     Author: Martin E. Liza
     File:   dataCollecter.py
-    Def:
+    Def:    Generates a csv file with aerodynamics coefficients..
 
     Author		    Date		Revision
     ----------------------------------------------------
     Martin E. Liza	09/26/2022	Initial version.
 '''
 import pandas as pd 
-import IPython
 import os 
-cases_path = '/p/work1/mliza/cases'
+
+# User's Input
+cases_path = '<abs_to_cases>'
 files_in   = os.listdir(cases_path)  
 files_in.sort() 
 dict_out  = { }
